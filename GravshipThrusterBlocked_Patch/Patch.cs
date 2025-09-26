@@ -12,7 +12,7 @@ namespace Lilly.GravshipThrusterNoBlocked
 {
     public static class Patch
     {
-        public static Harmonyx harmony = null;
+        public static HarmonyX harmony = null;
         public static string harmonyId = "Lilly.GravshipThrusterNoBlocked";
 
         //public static List<Type> nestedPatchTypes = typeof(Patch).GetNestedTypes(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static)
@@ -25,7 +25,7 @@ namespace Lilly.GravshipThrusterNoBlocked
                 Unpatch();
             }
             if (harmony != null) return;
-            harmony = new Harmonyx(harmonyId);
+            harmony = new HarmonyX(harmonyId);
             try
             {
                 harmony.PatchAll();
@@ -50,7 +50,7 @@ namespace Lilly.GravshipThrusterNoBlocked
         {
             MyLog.Message($"UnPatch");
             if (harmony == null) return;
-            harmony.UnpatchAll(harmonyId);
+            //harmony.UnpatchAll(harmonyId);
             harmony.UnpatchSelf();
             harmony = null;
         }

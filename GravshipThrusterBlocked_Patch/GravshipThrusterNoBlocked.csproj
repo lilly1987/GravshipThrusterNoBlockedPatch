@@ -85,7 +85,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Harmonyx.cs" />
+    <Compile Include="HarmonyX.cs" />
     <Compile Include="ModUI.cs" />
     <Compile Include="MyLog.cs" />
     <Compile Include="Patch.cs" />
