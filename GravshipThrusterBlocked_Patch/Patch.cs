@@ -15,9 +15,6 @@ namespace Lilly.GravshipThrusterNoBlocked
         public static HarmonyX harmony = null;
         public static string harmonyId = "Lilly.GravshipThrusterNoBlocked";
 
-        //public static List<Type> nestedPatchTypes = typeof(Patch).GetNestedTypes(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static)
-        //        .Where(t => t.GetCustomAttributes(typeof(HarmonyPatch), false).Any()).ToList();
-
         public static void OnPatch(bool repatch = false)
         {
             if (repatch)
@@ -29,12 +26,6 @@ namespace Lilly.GravshipThrusterNoBlocked
             try
             {
                 harmony.PatchAll();
-                //var prefix = AccessTools.Method(typeof(Patch), "CompGravshipThruster_IsBlocked_Patch");
-                //harmony.Patch(original, prefix: new HarmonyMethod(prefix));
-                //harmony.Patch(HarmonyPatchType.Prefix,
-                //    typeof(Patch), "CompGravshipThruster_IsBlocked_Patch",
-                //    typeof(CompGravshipThruster), "IsBlocked");
-
                 MyLog.Message($"Patch <color=#00FF00FF>Succ</color>");
             }
             catch (System.Exception e)
@@ -64,6 +55,19 @@ namespace Lilly.GravshipThrusterNoBlocked
             if (Settings.onPatch)
             {
                 __result = false;
+                return false;
+            }
+            return true;
+        }
+    
+
+        [HarmonyPatch(typeof(CompGravshipThruster), "IsOutdoors")]
+        [HarmonyPrefix]
+        public static bool CompGravshipThruster_IsOutdoors(ref bool __result)
+        {
+            if (Settings.onPatch)
+            {
+                __result = true;
                 return false;
             }
             return true;

@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using Lilly.GravshipThrusterNoBlocked;
 using RimWorld;
 using System;
 using System.Collections.Generic;
@@ -41,7 +42,7 @@ namespace Lilly
 
                 if (targetType == null || string.IsNullOrEmpty(targetMethodName))
                 {
-                    MyLog.Error($"패치 정보 누락: {method.Name}");
+                    MyLog.Error($"패치 정보 누락: <color=#FF8000FF>{method.Name}</color>");
                     continue;
                 }
 
@@ -52,22 +53,29 @@ namespace Lilly
                 var original = AccessTools.Method(targetType, targetMethodName, argumentTypes);
                 if (original == null)
                 {
-                    MyLog.Error($"원본 메서드 찾기 실패: {targetType}.{targetMethodName}");
+                    MyLog.Error($"원본 메서드 찾기 실패: <color=#00FF00FF>{targetType.Name}</color>.<color=#FF8000FF>{targetMethodName}</color>");
                     continue;
                 }
 
-                MyLog.Message($"패치 대상 : {targetType}.{targetMethodName} <- {method.DeclaringType}.{method.Name}");
-                var to=new HarmonyMethod(method);
-                base.Patch(original,
-                    method.GetCustomAttribute<HarmonyPrefix>()==null ? null: to, 
-                    method.GetCustomAttribute<HarmonyPostfix>()==null ? null: to, 
-                    method.GetCustomAttribute<HarmonyTranspiler>()==null ? null: to, 
-                    method.GetCustomAttribute<HarmonyFinalizer>()==null ? null: to
-                    );
-                MyLog.Message($"패치 성공: {targetType}.{targetMethodName} <- {method.DeclaringType}.{method.Name}");
-            }            
+                MyLog.Message($"패치 대상 : <color=#00FF00FF>{targetType.Name}</color>.<color=#FF8000FF>{targetMethodName}</color> <- <color=#00FF00FF>{method.DeclaringType.Name}</color>.<color=#FF8000FF>{method.Name}</color>");
+                try
+                {
+                    var to = new HarmonyMethod(method);
+                    base.Patch(original,
+                        method.GetCustomAttribute<HarmonyPrefix>() == null ? null : to,
+                        method.GetCustomAttribute<HarmonyPostfix>() == null ? null : to,
+                        method.GetCustomAttribute<HarmonyTranspiler>() == null ? null : to,
+                        method.GetCustomAttribute<HarmonyFinalizer>() == null ? null : to
+                        );
+                    MyLog.Message($"패치 성공: <color=#00FF00FF>{targetType.Name}</color>.<color=#FF8000FF>{targetMethodName}</color> <- <color=#00FF00FF>{method.DeclaringType.Name}</color>.<color=#FF8000FF>{method.Name}</color>");
+                }
+                catch (Exception e)
+                {
+                    MyLog.Message($"패치 실패: <color=#00FF00FF>{targetType.Name}</color>.<color=#FF8000FF>{targetMethodName}</color> <- <color=#00FF00FF>{method.DeclaringType.Name}</color>.<color=#FF8000FF>{method.Name}</color>");
+                    throw e;
+                }
+            }
         }
-
         public void UnPatchAll(Type type)
         {
             foreach (var method in type.GetMethods(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic))
@@ -81,14 +89,14 @@ namespace Lilly
 
                 if (targetType == null || string.IsNullOrEmpty(targetMethodName))
                 {
-                    MyLog.Error($"패치 정보 누락: {method.Name}");
+                    MyLog.Error($"패치 정보 누락: <color=#FF8000FF>{method.Name}</color>");
                     continue;
                 }
 
                 var original = AccessTools.Method(targetType, targetMethodName, argumentTypes);
                 if (original == null)
                 {
-                    MyLog.Error($"원본 메서드 찾기 실패: {targetType}.{targetMethodName}");
+                    MyLog.Error($"원본 메서드 찾기 실패: <color=#00FF00FF>{targetType.Name}</color>.<color=#FF8000FF>{targetMethodName}</color>");
                     continue;
                 }
 
@@ -97,13 +105,11 @@ namespace Lilly
                 base.Unpatch(original, HarmonyPatchType.Postfix, Id);
                 base.Unpatch(original, HarmonyPatchType.Transpiler, Id);
                 base.Unpatch(original, HarmonyPatchType.Finalizer, Id);
-
-                MyLog.Message($"패치 해제됨: {targetType}.{targetMethodName} <- {method.DeclaringType}.{method.Name}");
+                MyLog.Message($"패치 해제: <color=#00FF00FF>{targetType.Name}</color>.<color=#FF8000FF>{targetMethodName}</color> <- <color=#00FF00FF>{method.DeclaringType.Name}</color>.<color=#FF8000FF>{method.Name}</color>");
             }
-
         }
 
-        public MethodInfo Patch(HarmonyPatchType harmonyPatchType, Type typePatch, string namePatch,Type typeOriginal, string nameOriginal, Type[] parameters = null, Type[] generics = null)
+        public MethodInfo Patch(HarmonyPatchType harmonyPatchType, Type typePatch, string namePatch, Type typeOriginal, string nameOriginal, Type[] parameters = null, Type[] generics = null)
         {
             var original = AccessTools.Method(typeOriginal, nameOriginal, parameters, generics);
             var patch = AccessTools.Method(typePatch, namePatch);
@@ -130,7 +136,7 @@ namespace Lilly
                     break;
                 case HarmonyPatchType.ReversePatch:
                     throw new Exception("구현 안됨");
-                    //break;
+                //break;
                 default:
                     throw new Exception("비정상 값");
                     //break;
